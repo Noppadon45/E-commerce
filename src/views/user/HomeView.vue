@@ -1,7 +1,7 @@
 <script setup>
 import Userlayout from "@/layouts/Userlayout.vue"
 import { useProductStore } from "@/stores/user/product.js"
-import Product from "@/components/products.vue"
+import Product from "@/components/Products.vue"
 const productStore = useProductStore()
 </script>
 

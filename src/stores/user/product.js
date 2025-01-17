@@ -23,4 +23,9 @@ export const useProductStore = defineStore("product", {
       },
     ],
   }),
+  actions: {
+    filterProduct(Searchtext) {
+      return this.list.filter((product) => product.name.includes(Searchtext))
+    },
+  },
 })

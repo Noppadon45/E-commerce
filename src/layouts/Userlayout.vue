@@ -1,7 +1,21 @@
 <script setup>
-import { RouterLink } from "vue-router"
+import { RouterLink, useRouter } from "vue-router"
 import { ref, onMounted } from "vue"
+import { useCartStore } from "@/stores/user/cart"
 const Islogin = ref(false)
+const Searchtext = ref("")
+const router = useRouter()
+const CartStore = useCartStore()
+const HandleSearch = (event) => {
+  if (event.key === "Enter") {
+    router.push({
+      name: "search",
+      query: {
+        q: Searchtext.value,
+      },
+    })
+  }
+}
 
 onMounted((onMounted) => {
   if (localStorage.getItem("Islogin")) {
@@ -44,7 +58,7 @@ const logout = () => {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
-              <span class="badge badge-sm indicator-item">8</span>
+              <span class="badge badge-sm indicator-item">{{ CartStore.summaryQuantity }}</span>
             </div>
           </div>
           <div
@@ -52,8 +66,12 @@ const logout = () => {
             class="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow"
           >
             <div class="card-body">
-              <span class="text-lg font-bold">8 Items</span>
-              <span class="text-info">Subtotal: $999</span>
+              <span class="text-lg font-bold"
+                >{{ CartStore.summaryQuantity }} Items</span
+              >
+              <span class="text-info"
+                >Subtotal: {{ CartStore.summaryPrice }} Bath</span
+              >
               <div class="card-actions">
                 <RouterLink
                   :to="{ name: 'cart' }"
@@ -69,6 +87,8 @@ const logout = () => {
             type="text"
             placeholder="Search"
             class="input input-bordered w-24 md:w-auto"
+            v-model="Searchtext"
+            @keyup="HandleSearch"
           />
         </div>
         <button @click="login()" v-if="!Islogin" class="btn btn-secondary">
@@ -83,7 +103,7 @@ const logout = () => {
             <div class="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-                src="https://lh3.googleusercontent.com/a/ACg8ocKWK-EngmYb20BcNHdayJf_EaCJeuISAZoS4Y-0gyGo5Je7MMY=s288-c-no"
+                src="https://image.cdn2.seaart.me/2023-09-22/17842173328257029/f37d3a603fccb9fa994204c38161592e11ab8d22_high.webp"
               />
             </div>
           </div>
@@ -103,10 +123,8 @@ const logout = () => {
     </div>
   </div>
   <slot></slot>
-  <div>
-    <footer
-      class="footer bg-base-300 text-neutral-content items-center p-4 text-black"
-    >
+  <div class="">
+    <footer class="footer bg-base-300 text-black items-center p-4">
       <aside class="grid-flow-col items-center">
         <svg
           width="36"
