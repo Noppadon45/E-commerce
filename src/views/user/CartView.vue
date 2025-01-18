@@ -18,9 +18,7 @@ const changeQuantity = (event, index) => {
         <div v-if="CartStore.items.length === 0">Cart is Empty</div>
         <div v-else v-for="(item, index) in CartStore.items" class="flex">
           <div class="flex-1 w-full p-10">
-            <img
-              src="https://image.cdn2.seaart.me/2024-12-05/ct8bj0de878c73dbb17g/a1e4927de6fc093b956c8bcc3ea1d89c_high.webp"
-            />
+            <img :src="item.imageUrl" />
           </div>
           <div class="flex-1">
             <div class="flex flex-col justify-between h-full">
@@ -37,6 +35,7 @@ const changeQuantity = (event, index) => {
                     <select
                       @change="changeQuantity($event, index)"
                       class="select w-1/2 mx-6"
+                      v-model="item.quantity"
                     >
                       <option v-for="quantity in [1, 2, 3, 4, 5, 6]">
                         {{ quantity }}
@@ -60,17 +59,17 @@ const changeQuantity = (event, index) => {
         <div class="text-2xl mx-5 m-4 font-bold">Order Summary</div>
         <div class="my-4">
           <div class="flex justify-between py-2">
+            <div>AllProductPrice</div>
             <div>{{ CartStore.summaryPrice }}</div>
-            <div>100</div>
           </div>
           <div class="flex justify-between py-2">
-            <div>ราคาส่ง</div>
+            <div>Shipping price</div>
             <div>0</div>
           </div>
           <div></div>
           <div class="flex justify-between py-2 divide-y divide-black">
+            <div>Total Price</div>
             <div>{{ CartStore.summaryPrice }}</div>
-            <div>1</div>
           </div>
         </div>
       </div>

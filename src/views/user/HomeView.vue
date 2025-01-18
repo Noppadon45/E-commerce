@@ -1,8 +1,18 @@
 <script setup>
 import Userlayout from "@/layouts/Userlayout.vue"
 import { useProductStore } from "@/stores/user/product.js"
+import { useCartStore } from "@/stores/user/cart.js"
 import Product from "@/components/Products.vue"
+import { useRouter } from "vue-router"
 const productStore = useProductStore()
+const cartStore = useCartStore()
+const router = useRouter()
+
+const addtoCarts = (product) => {
+  console.log("Add to cart", product)
+  cartStore.addToCart(product)
+  router.push({ name: "cart" })
+}
 </script>
 
 <template>
@@ -24,6 +34,6 @@ const productStore = useProductStore()
     </div>
 
     <!-- Product Shelf-->
-    <Product :products="productStore.list">"</Product>
+    <Product :products="productStore.list" :addtoCart="addtoCarts"></Product>
   </Userlayout>
 </template>

@@ -2,17 +2,7 @@ import { defineStore } from "pinia"
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
-    items: [
-      {
-        name: "Test1",
-        imageUrl:
-          "https://image.cdn2.seaart.me/2024-08-22/cr3hpkde878c73c2uk50/7bf5efcd481335eb797061b93281d376_high.webp",
-        quantity: 1,
-        about: "Test11",
-        state: "open",
-        price: 100,
-      },
-    ],
+    items: [],
   }),
   getters: {
     summaryPrice(state) {
@@ -25,14 +15,32 @@ export const useCartStore = defineStore("cart", {
     },
   },
   actions: {
+    loadCart() {
+      const previousCart = localStorage.getItem("cart-data")
+      if (previousCart) {
+        this.items = JSON.parse(previousCart)
+      }
+    },
     addToCart(productData) {
-      this.items.push(productData)
+      const findItemsIndex = this.items.findIndex((item) => {
+        return item.name === productData.name
+      })
+      if (findItemsIndex < 0) {
+        productData.quantity = 1
+        this.items.push(productData)
+      } else {
+        const currentItem = this.items[findItemsIndex]
+        this.updateCartQuantity(findItemsIndex, currentItem.quantity + 1)
+      }
+      localStorage.setItem("cart-data", JSON.stringify(this.items))
     },
     updateCartQuantity(index, quantity) {
       this.items[index].quantity = quantity
+      localStorage.setItem("cart-data", JSON.stringify(this.items))
     },
     removeItemInCart(index) {
       this.items.splice(index, 1)
+      localStorage.setItem("cart-data", JSON.stringify(this.items))
     },
   },
 })
