@@ -16,13 +16,10 @@ const addtoCarts = (product) => {
   cartStore.addToCart(product)
   router.push({ name: "cart" })
 }
-watch(
-  () => route.query.q,
-  (newSearchtext) => {
+watch(() => route.query.q, (newSearchtext) => {
     Searchtext.value = newSearchtext
   },
-  { immediate: true }
-)
+  {immediate: true })
 
 const filterProducts = computed(() => {
   return productStore.filterProduct(Searchtext.value)

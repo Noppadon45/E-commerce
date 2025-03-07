@@ -121,7 +121,7 @@ const logout = () => {
         </div>
       </div>
     </div>
-  </div>
+  </div> 
   <slot></slot>
   <div class="">
     <footer class="footer bg-base-300 text-black items-center p-4">

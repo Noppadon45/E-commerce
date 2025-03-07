@@ -14,7 +14,7 @@ defineProps({
       v-for="product in products"
       class="card card-compact bg-base-100 w-full shadow-xl"
     >
-      <figure>
+      <figure class="h-2/3">
         <img :src="product.imageUrl" />
       </figure>
       <div class="card-body">
