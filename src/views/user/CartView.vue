@@ -58,16 +58,16 @@ const changeQuantity = (event, index) => {
       <div class="flex-auto ml-3 bg-orange-400 p-5">
         <div class="text-2xl mx-5 m-4 font-bold">Order Summary</div>
         <div class="my-4">
-          <div class="flex justify-between py-2">
-            <div>AllProductPrice</div>
+          <div class="flex justify-between py-3">
+            <div>AllProduct Price</div>
             <div>{{ CartStore.summaryPrice }}</div>
           </div>
-          <div class="flex justify-between py-2">
-            <div>Shipping price</div>
+          <div class="flex justify-between py-3">
+            <div>Shipping Price</div>
             <div>0</div>
           </div>
           <div></div>
-          <div class="flex justify-between py-2 divide-y divide-black">
+          <div class="flex justify-between py-3 divide-y divide-black">
             <div>Total Price</div>
             <div>{{ CartStore.summaryPrice }}</div>
           </div>
