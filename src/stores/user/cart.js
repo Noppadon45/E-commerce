@@ -3,6 +3,7 @@ import { defineStore } from "pinia"
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
+    checkout: {}
   }),
   getters: {
     summaryPrice(state) {
@@ -42,5 +43,22 @@ export const useCartStore = defineStore("cart", {
       this.items.splice(index, 1)
       localStorage.setItem("cart-data", JSON.stringify(this.items))
     },
+    checkoutCart(userData) {
+      const orderData = {
+        ...userData,
+        totalPrice: this.summaryPrice,
+        payment: 'Credit Card',
+        created: (new Date()).toLocaleString(),
+        ordernumber: `AA${Math.floor(Math.random() * 10000)}`,
+        products: this.items
+      }
+      localStorage.setItem("order-data", JSON.stringify(orderData))
+    },
+    loadcheckout() {
+      const checkoutData = localStorage.getItem("order-data")
+      if (checkoutData) {
+        this.checkout = JSON.parse(checkoutData)
+      }
+    }
   },
 })

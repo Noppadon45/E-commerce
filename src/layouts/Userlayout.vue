@@ -30,6 +30,9 @@ const login = () => {
 const logout = () => {
   Islogin.value = false
   localStorage.removeItem("Islogin")
+  localStorage.removeItem("cart-data")
+  localStorage.removeItem("order-data")
+  window.location.reload()
 }
 </script>
 <template>
