@@ -1,7 +1,7 @@
 <script setup>
 import Adminlayout from '@/layouts/Adminlayout.vue';
 import { reactive, ref } from 'vue';
-import { useRouter , useRoute } from 'vue-router';
+import { useRouter , useRoute ,RouterLink } from 'vue-router';
 import { onMounted } from 'vue';
 
 import { useAdminProductStore } from '@/stores/admin/product';
@@ -82,17 +82,17 @@ onMounted(() => {
 <template>
     <Adminlayout>
         <div class="shadow-xl p-10">
-            <div class="text-3xl"> {{  mode }}</div>
+            <div class="text-3xl font-bold"> {{  mode }}</div>
             <div class="divider"></div>
             <fieldset class="fieldset py-4 grid grid-cols-2 gap-4">
                 <div v-for="form in inputForm">
-                    <legend class="fieldset-legend"> {{ form.name }}</legend>
+                    <legend class="fieldset-legend"> {{ form.name }} :</legend>
                     <input v-model="productData[form.field]" type="text" class="input input-info w-full" placeholder="Type here" />
                 </div>
             </fieldset>
             <div class="divider"></div>
             <fieldset class="fieldset">
-                <legend class="fieldset-legend">Status</legend>
+                <legend class="fieldset-legend">Status :</legend>
                 <select v-model="productData.status" class="select input-info">
                     <option disabled selected>Choose Status</option>
                     <option value="open">Open</option>
@@ -101,7 +101,7 @@ onMounted(() => {
             </fieldset>
             <div class="flex justify-end gap-4">
                 <div>
-                    <button class="btn btn-ghost">Back</button>
+                    <RouterLink :to="{name : 'admin-product-list'}" class="btn btn-ghost">Back</RouterLink>
                 </div>
                 <div>
                     <button @click="SubmitProduct()" class="btn btn-success"> {{  mode }}</button>

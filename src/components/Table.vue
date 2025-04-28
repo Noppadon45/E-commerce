@@ -7,7 +7,7 @@ defineProps({
 
 </script>
  <template>
-    <table class="table table-zebra">
+    <table class="table table-zebra shadow">
         <!-- head -->
         <thead>
             <tr>

@@ -20,7 +20,6 @@ const RemoveProduct = (index) => {
     adminProductStore.removeProduct(index)
 }
 
-
 </script>
 
 <template>
