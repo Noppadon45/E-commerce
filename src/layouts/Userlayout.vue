@@ -2,7 +2,10 @@
 import { RouterLink, useRouter } from "vue-router"
 import { ref, onMounted } from "vue"
 import { useCartStore } from "@/stores/user/cart"
-const Islogin = ref(false)
+import { useAccountStore } from "@/stores/account"
+
+const AccountStore = useAccountStore()
+
 const Searchtext = ref("")
 const router = useRouter()
 const CartStore = useCartStore()
@@ -17,23 +20,27 @@ const HandleSearch = (event) => {
   }
 }
 
-onMounted((onMounted) => {
-  if (localStorage.getItem("Islogin")) {
-    Islogin.value = true
+const login = async () => {
+  try {
+    await AccountStore.signInWithGoogle()
+  } catch (error) {
+    console.log("error from login" , error)
   }
-})
-
-const login = () => {
-  Islogin.value = true
-  localStorage.setItem("Islogin", true)
 }
-const logout = () => {
-  Islogin.value = false
-  localStorage.removeItem("Islogin")
-  localStorage.removeItem("cart-data")
-  localStorage.removeItem("order-data")
+const logout = async () => {
+  try {
+    await AccountStore.signOut()
+  } catch (error) {
+    console.log("error from login" , error)
+  }
   window.location.reload()
 }
+
+onMounted(async() => {
+  await AccountStore.checkAuth()
+})
+
+
 </script>
 <template>
   <div class="container mx-auto">
@@ -94,7 +101,7 @@ const logout = () => {
             @keyup="HandleSearch"
           />
         </div>
-        <button @click="login()" v-if="!Islogin" class="btn btn-secondary">
+        <button @click="login()" v-if="!AccountStore.isLoginIn" class="btn btn-secondary">
           Login
         </button>
         <div v-else="Islogined" class="dropdown dropdown-end">

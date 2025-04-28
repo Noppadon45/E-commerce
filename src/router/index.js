@@ -19,6 +19,9 @@ import AdminUserListView from "@/views/admin/user/ListView.vue"
 import AdminUserUpdateView from "@/views/admin/user/UpdateView.vue"
 
 
+import { useAccountStore } from "@/stores/account"
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -99,6 +102,13 @@ const router = createRouter({
     },
     
   ],
+})
+
+router.beforeEach(async (to , from , next) => {
+  const AccountStore = useAccountStore()
+  await AccountStore.checkAuth()
+
+  next()
 })
 
 export default router
