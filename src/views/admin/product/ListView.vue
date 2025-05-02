@@ -12,12 +12,26 @@ import Table from '@/components/Table.vue';
 
 const adminProductStore = useAdminProductStore()
 
-onMounted(async() => {
+onMounted(async () => {
     await adminProductStore.loadProducts()
 })
 
-const RemoveProduct = async(productId) => {
+const RemoveProduct = async (productId) => {
     await adminProductStore.removeProduct(productId)
+    await adminProductStore.loadProducts()
+}
+
+const searchProduct = async () => {
+    await adminProductStore.loadProducts()
+}
+
+const changeStatusFilter = async (status) => {
+    adminProductStore.filter.status = status
+    await adminProductStore.loadProducts()
+}
+
+const changeSortUpdate = async (sort) => {
+    adminProductStore.filter.sort.update = sort
     await adminProductStore.loadProducts()
 }
 
@@ -29,6 +43,28 @@ const RemoveProduct = async(productId) => {
             <div class="text-4xl font-bold">Product</div>
             <div>
                 <RouterLink :to="{ name: 'admin-product-create' }" class="btn btn-lg">Add New</RouterLink>
+            </div>
+        </div>
+        <div class="flex mt-4">
+            <div class="flex-1">
+                <input v-model="adminProductStore.filter.search" type="text" placeholder="Type here" class="input input-primary" />
+            </div>
+            <div class="flex-1 ">
+                <ul class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
+                    <li class="menu-title">UpdateAt</li>
+                    <li><button class="btn" :class="adminProductStore.filter.sort.update === 'asc' ? 'btn-active' : ''" @click="changeSortUpdate('asc')">ASC</button></li>
+                    <li><button class="btn" :class="adminProductStore.filter.sort.update === 'desc' ? 'btn-active' : ''" @click="changeSortUpdate('desc')">DESC</button></li>
+                </ul>
+            </div>
+            <div class="flex-1">
+                <ul class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
+                    <li class="menu-title">Status</li>
+                    <li><button class="btn" :class="adminProductStore.filter.status === 'open' ? 'btn-active' : ''" @click="changeStatusFilter('open')">OPEN</button></li>
+                    <li><button class="btn" :class="adminProductStore.filter.status === 'close' ? 'btn-active' : ''" @click="changeStatusFilter('close')">CLOSE</button></li>
+                </ul>
+            </div>
+            <div class="flex-2">
+                <button @click="searchProduct()" class="btn">Search</button>
             </div>
         </div>
         <div class="divider"></div>
@@ -48,7 +84,8 @@ const RemoveProduct = async(productId) => {
                 <td> {{ product.update }}</td>
                 <td>
                     <div class="flex w-16 gap-4 justify-center">
-                        <RouterLink :to="{ name: 'admin-product-update', params: { id: product.productId } }" class="flex w-16 btn">
+                        <RouterLink :to="{ name: 'admin-product-update', params: { id: product.productId } }"
+                            class="flex w-16 btn">
                             <Edit></Edit>
                         </RouterLink>
                         <div @click="RemoveProduct(product.productId)" class="flex w-16 btn">

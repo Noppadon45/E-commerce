@@ -1,16 +1,28 @@
 import { defineStore } from "pinia"
 import { db } from "@/firebase"
-import { collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc , query , where , orderBy } from "firebase/firestore"
 
 
 export const useAdminProductStore = defineStore("admin-product", {
     state: () => ({
         list: [],
-        loaded: false
+        filter: {
+            search: '',
+            status: '',
+            sort: {
+                update: 'desc',
+            }
+        }
     }),
     actions: {
         async loadProducts() {
-            const productCol = collection(db, 'products')
+            let productCol = query(collection(db, 'products') , orderBy("update" , this.filter.sort.update))
+            if (this.filter.search) {
+                productCol = query(productCol , where("name" , "==" , this.filter.search))
+            }
+            if (this.filter.status) {
+                productCol = query(productCol , where("status" , "==" , this.filter.status))
+            }
             const productSnapshot = await getDocs(productCol)
             const products = productSnapshot.docs.map(doc => {
                 let convertedProduct = doc.data()
