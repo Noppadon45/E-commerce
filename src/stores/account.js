@@ -9,7 +9,8 @@ export const useAccountStore = defineStore("account", {
     state: () => ({
         isLoginIn: false,
         isAdmin: false,
-        user: {}
+        user: {},
+        profile: {}
     }),
     actions: {
         async signInWithGoogle() {
@@ -33,22 +34,28 @@ export const useAccountStore = defineStore("account", {
         },
         async checkAuth() {
             return new Promise((resolve) => {
-                onAuthStateChanged(auth, (user) => {
+                onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         this.isLoginIn = true
                         this.user = user
                         console.log("UserId =", user.uid)
                         const docRef = doc(db, "users", user.uid)
-                        const docSnap = getDoc(docRef)
+                        const docSnap = await getDoc(docRef)
                         if (docSnap.exists()) {
-
+                            this.profile = docSnap.data()
                         }
                         else {
                             const newUser = {
                                 //เพิ่มข้อมูลผู้ใช้
+                                name: user.displayName,
+                                role: "Member",
+                                status: "Active",
+                                update: new Date(),
                             }
+                            await setDoc(docRef, newUser)
+                            this.profile = newUser
                         }
-                        if (user.email === 'admin@admin.com') {
+                        if (this.profile.role === 'Admin' || this.profile.role === 'Moderator') {
                             this.isAdmin = true
                         }
                         resolve(true)

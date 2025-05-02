@@ -1,41 +1,50 @@
 import { defineStore } from "pinia"
+import { db } from "@/firebase"
+import { collection, doc, getDoc, getDocs, setDoc, deleteDoc } from "firebase/firestore"
 
 
 export const useAdminUserStore = defineStore("admin-user", {
-    state : () => ({
-        list: [
-            {
-                name: 'John',
-                role: 'Admin',
-                status: 'Active',
-                update: (new Date()).toISOString(),
-            },
-            {
-                name: 'Doe',
-                role: 'Admin',
-                status: 'Active',
-                update: (new Date()).toISOString(),
-            }
-        ],
-
+    state: () => ({
+        list: [],
     }),
     actions: {
-        getUser (index) {
-            return this.list[index]
+        async loadUser() {
+            const userCol = collection(db, 'users')
+            const userSnapshot = await getDocs(userCol)
+            console.log(userSnapshot.docs)
+            //userSnapshot.docs
+            const userList = userSnapshot.docs.map(doc => {
+                let convertedUser = doc.data()
+                convertedUser.uid = doc.id
+                convertedUser.update = convertedUser.update.toDate()
+                return convertedUser
+            })
+            console.log(userList)
+            this.list = userList
         },
-        updateUser (index , userData) {
-            // this.list[index].name = userData.name
-            // this.list[index].role = userData.role
-            // this.list[index].status = userData.state
-            const fields = ['name' , 'role' , 'status']
-            for (let field of fields) {
-                this.list[index][field] = userData[field]
+        async getUser(uid) {
+            try {
+                const userRef = doc(db, 'users', uid)
+                const userSnapshot = await getDoc(userRef)
+                return userSnapshot.data()
+            } catch (error) {
+                console.log('error', error)
             }
-            this.list[index].update = (new Date()).toISOString()
-            
         },
-        deleteUser (index) {
-            this.list.splice(index ,1)
-        }
+        async updateUser(uid, userData) {
+            try {
+                const updateUserData = {
+                    name: userData.name,
+                    status: userData.status,
+                    role: userData.role,
+                    update: new Date(),
+
+                }
+                const docRef = doc(db, 'users', uid)
+                await setDoc(docRef, updateUserData)
+            } catch (error) {
+                console.log('error', error)
+            }
+        },
     }
 })

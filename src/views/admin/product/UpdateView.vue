@@ -1,7 +1,7 @@
 <script setup>
 import Adminlayout from '@/layouts/Adminlayout.vue';
 import { reactive, ref } from 'vue';
-import { useRouter , useRoute ,RouterLink } from 'vue-router';
+import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { onMounted } from 'vue';
 
 import { useAdminProductStore } from '@/stores/admin/product';
@@ -50,22 +50,27 @@ const productData = reactive({
     status: ''
 })
 
-const SubmitProduct = () => {
-    if (mode.value === 'Edit Product') {
-        adminProductStore.updateProduct(productIndex.value , productData)
-    }else {
-        adminProductStore.addProduct(productData)
+const SubmitProduct = async () => {
+    try {
+        if (mode.value === 'Edit Product') {
+            await adminProductStore.updateProduct(productIndex.value, productData)
+        } else {
+            await adminProductStore.addProduct(productData)
+        }
+    } catch (error) {
+        console.log('error', error)
     }
 
-    router.push({ name: 'admin-product-list'})
+
+    router.push({ name: 'admin-product-list' })
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (route.params.id) {
-        productIndex.value = parseInt(route.params.id)
+        productIndex.value = route.params.id
         mode.value = 'Edit Product'
 
-        const SelectedProduct = adminProductStore.getProduct(productIndex.value)
+        const SelectedProduct = await adminProductStore.getProduct(productIndex.value)
         console.log(SelectedProduct)
         productData.name = SelectedProduct.name
         productData.imageUrl = SelectedProduct.imageUrl
@@ -82,12 +87,13 @@ onMounted(() => {
 <template>
     <Adminlayout>
         <div class="shadow-xl p-10">
-            <div class="text-3xl font-bold"> {{  mode }}</div>
+            <div class="text-3xl font-bold"> {{ mode }}</div>
             <div class="divider"></div>
             <fieldset class="fieldset py-4 grid grid-cols-2 gap-4">
                 <div v-for="form in inputForm">
                     <legend class="fieldset-legend"> {{ form.name }} :</legend>
-                    <input v-model="productData[form.field]" type="text" class="input input-info w-full" placeholder="Type here" />
+                    <input v-model="productData[form.field]" type="text" class="input input-info w-full"
+                        placeholder="Type here" />
                 </div>
             </fieldset>
             <div class="divider"></div>
@@ -101,10 +107,10 @@ onMounted(() => {
             </fieldset>
             <div class="flex justify-end gap-4">
                 <div>
-                    <RouterLink :to="{name : 'admin-product-list'}" class="btn btn-ghost">Back</RouterLink>
+                    <RouterLink :to="{ name: 'admin-product-list' }" class="btn btn-ghost">Back</RouterLink>
                 </div>
                 <div>
-                    <button @click="SubmitProduct()" class="btn btn-success"> {{  mode }}</button>
+                    <button @click="SubmitProduct()" class="btn btn-success"> {{ mode }}</button>
                 </div>
             </div>
         </div>

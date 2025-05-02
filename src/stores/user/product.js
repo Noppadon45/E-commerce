@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs , query , where } from "firebase/firestore"; 
 import { db } from "@/firebase"
 
 
@@ -10,7 +10,8 @@ export const useProductStore = defineStore("product", {
   }),
   actions: {
     async loadProducts() {
-      const productSnapshot = await getDocs(collection(db, "products"));
+      const productCol = query(collection(db , 'products'), where("status" ,"==" , "open"))
+      const productSnapshot = await getDocs(productCol);
       const products = productSnapshot.docs.map(doc => doc.data())
       if (products.length > 0) {
           this.list = products

@@ -12,12 +12,13 @@ import Table from '@/components/Table.vue';
 
 const adminProductStore = useAdminProductStore()
 
-onMounted(() => {
-    adminProductStore.loadProducts()
+onMounted(async() => {
+    await adminProductStore.loadProducts()
 })
 
-const RemoveProduct = (index) => {
-    adminProductStore.removeProduct(index)
+const RemoveProduct = async(productId) => {
+    await adminProductStore.removeProduct(productId)
+    await adminProductStore.loadProducts()
 }
 
 </script>
@@ -47,10 +48,10 @@ const RemoveProduct = (index) => {
                 <td> {{ product.update }}</td>
                 <td>
                     <div class="flex w-16 gap-4 justify-center">
-                        <RouterLink :to="{ name: 'admin-product-update', params: { id: index } }" class="flex w-16 btn">
+                        <RouterLink :to="{ name: 'admin-product-update', params: { id: product.productId } }" class="flex w-16 btn">
                             <Edit></Edit>
                         </RouterLink>
-                        <div @click="RemoveProduct(index)" class="flex w-16 btn">
+                        <div @click="RemoveProduct(product.productId)" class="flex w-16 btn">
                             <Trash></Trash>
                         </div>
 
