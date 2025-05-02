@@ -12,7 +12,7 @@ const eventstore = useEventStore()
 onMounted(() => {
   cartstore.loadCart()
   productstore.loadProducts()
-  eventstore.popupupmessage('info','Hello')
+
 })
 </script>
 

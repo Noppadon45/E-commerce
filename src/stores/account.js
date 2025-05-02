@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged , signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase.js"
+import { auth ,db} from "@/firebase.js"
+import { doc , getDoc , setDoc } from "firebase/firestore";
 
 const provider = new GoogleAuthProvider();
 
@@ -36,6 +37,20 @@ export const useAccountStore = defineStore("account", {
                     if (user) {
                         this.isLoginIn = true
                         this.user = user
+                        console.log("UserId =", user.uid)
+                        const docRef = doc(db, "users", user.uid)
+                        const docSnap = getDoc(docRef)
+                        if (docSnap.exists()) {
+
+                        }
+                        else {
+                            const newUser = {
+                                //เพิ่มข้อมูลผู้ใช้
+                            }
+                        }
+                        if (user.email === 'admin@admin.com') {
+                            this.isAdmin = true
+                        }
                         resolve(true)
                     }else {
                         resolve(false)
@@ -50,10 +65,14 @@ export const useAccountStore = defineStore("account", {
                 this.isAdmin = true
                 this.user = adminCredential.user
             } catch (error) {
-                console.log("Error store =" , error)
+                console.log("Error store =" , error.code)
                 switch (error.code) {
                     case "auth/invalid-email":
                         throw new Error("Email Incorrect")
+                    case "auth/wrong-password":
+                        throw new Error("Password Incorrect")
+                    case "auth/network-request-failed":
+                        throw new Error("Network Error")
                     default:
                         throw new Error("Invalid Error")
                 }
