@@ -1,11 +1,12 @@
 import { defineStore } from "pinia"
 import { db } from "@/firebase"
-import { collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc , query , where , orderBy } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc , query , where , orderBy , limit , limitToLast ,startAfter , endBefore } from "firebase/firestore"
 
 
 export const useAdminProductStore = defineStore("admin-product", {
     state: () => ({
         list: [],
+        docList: [],
         filter: {
             search: '',
             status: '',
@@ -14,6 +15,16 @@ export const useAdminProductStore = defineStore("admin-product", {
             }
         }
     }),
+    getters: {
+        list (state) {
+            return state.docList.map(doc => {
+                let convertedProduct = doc.data()
+                convertedProduct.productId = doc.id
+                convertedProduct.update = convertedProduct.update.toDate()
+                return convertedProduct
+            })
+        }
+    },
     actions: {
         async loadProducts() {
             let productCol = query(collection(db, 'products') , orderBy("update" , this.filter.sort.update))
@@ -23,16 +34,26 @@ export const useAdminProductStore = defineStore("admin-product", {
             if (this.filter.status) {
                 productCol = query(productCol , where("status" , "==" , this.filter.status))
             }
+            productCol = query(productCol , limit(2))
             const productSnapshot = await getDocs(productCol)
-            const products = productSnapshot.docs.map(doc => {
-                let convertedProduct = doc.data()
-                convertedProduct.productId = doc.id
-                convertedProduct.update = convertedProduct.update.toDate()
-                return convertedProduct
-            })
+            this.docList = productSnapshot.docs
             if (products) {
                 this.list = products
             }
+        },
+        async loadNextProduct (mode) {
+            let productCol = query(collection(db, 'products') , orderBy("update" , this.filter.sort.update))
+            if (mode === 'next') {
+                const lastDocument = this.docList[this.docList.length - 1]
+                productCol = query(productCol , startAfter(lastDocument) , limit(2))
+            }
+            else if (mode === 'previous') {
+                const firstDocument = this.docList[0]
+                productCol = query(productCol , endBefore(firstDocument) , limitToLast(2))
+
+            }
+            const productSnapshot = await getDocs(productCol)
+            this.docList = productSnapshot.docs
         },
         async getProduct(productId) {
             try {

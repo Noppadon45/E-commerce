@@ -1,7 +1,6 @@
 <script setup>
 import Adminlayout from '@/layouts/Adminlayout.vue';
-import { ref } from 'vue';
-import { onMounted } from 'vue';
+import { ref , onMounted } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
 import { useAdminProductStore } from '@/stores/admin/product';
 
@@ -9,6 +8,9 @@ import { useAdminProductStore } from '@/stores/admin/product';
 import Edit from '@/components/icons/Edit.vue'
 import Trash from '@/components/icons/Trash.vue'
 import Table from '@/components/Table.vue';
+import Pagination from '@/components/Pagination.vue';
+
+const currentPage = ref(1)
 
 const adminProductStore = useAdminProductStore()
 
@@ -33,6 +35,16 @@ const changeStatusFilter = async (status) => {
 const changeSortUpdate = async (sort) => {
     adminProductStore.filter.sort.update = sort
     await adminProductStore.loadProducts()
+}
+
+const changePage = async (newPage) => {
+    if (newPage < currentPage.value) {
+        await adminProductStore.loadNextProduct('previous')
+    }else if (newPage > currentPage.value) {
+        await adminProductStore.loadNextProduct('next')
+    }
+    console.log(newPage)
+    currentPage.value = newPage
 }
 
 </script>
@@ -73,7 +85,7 @@ const changeSortUpdate = async (sort) => {
             <tr v-for="(product, index) in adminProductStore.list">
                 <th> {{ product.name }}</th>
                 <td>
-                    <div class="mask mask-squircle w-24"><img :src='product.imageUrl' /></div>
+                    <div class="mask mask-squircle w-24"><img class="w-full h-full object-cover" :src='product.imageUrl' /></div>
                 </td>
                 <td> {{ product.price }}</td>
                 <td> {{ product.remainquantity }} / {{ product.quantity }}</td>
@@ -96,5 +108,6 @@ const changeSortUpdate = async (sort) => {
                 </td>
             </tr>
         </Table>
+        <Pagination class="pt-3" :currentPage="currentPage" :maxPage="3" :onPageChange="changePage"></Pagination>
     </Adminlayout>
 </template>
